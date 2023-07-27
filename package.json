@@ -1,0 +1,15 @@
+{
+    "name": "crypto-soket",
+    "version": "1.0.0",
+    "description": "",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "nodemon index.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "express-rate-limit": "^2.5.0"
+    }
+}
