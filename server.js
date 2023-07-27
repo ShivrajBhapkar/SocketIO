@@ -42,10 +42,6 @@ io.on("connection", (socket) => {
         const updateInterval = 60000; 
         const interval = setInterval(async () => {
             const newUpdatedData = await fetchData(currency);
-            console.log(
-                "Sending updated data to the client:",
-                newUpdatedData[0].price_change_percentage_24h
-            );
             if (newUpdatedData !== undefined) {
                 socket.emit("updateData", newUpdatedData);
             }
