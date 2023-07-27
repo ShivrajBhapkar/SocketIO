@@ -39,9 +39,10 @@ io.on("connection", (socket) => {
 
     socket.on("initialData", async ({ initialData, currency }) => {
         socket.emit("updateData", initialData);
-        const updateInterval = 60000; 
+        const updateInterval = 60000;
         const interval = setInterval(async () => {
             const newUpdatedData = await fetchData(currency);
+
             if (newUpdatedData !== undefined) {
                 socket.emit("updateData", newUpdatedData);
             }
