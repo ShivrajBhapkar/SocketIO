@@ -3,12 +3,11 @@ const express = require("express");
 const http = require("http");
 const socketIO = require("socket.io");
 const rateLimit = require("express-rate-limit");
-
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
     cors: {
-        origin: "https://crypto-currency-trackker.netlify.app",
+        origin: "https://crypto-currency-trackker.netlify.app/",
     },
 });
 
@@ -19,7 +18,7 @@ const coingeckoRateLimitOptions = {
 };
 
 const coingeckoLimiter = rateLimit(coingeckoRateLimitOptions);
-app.use("https://api.coingecko.com/api/", coingeckoLimiter);
+app.use("/api/v3", coingeckoLimiter);
 const fetchData = async (currency) => {
     try {
         const response = await axios.get(
@@ -33,19 +32,19 @@ const fetchData = async (currency) => {
 
 // Rate-limiting configuration
 
-let interval; 
+let interval;
 io.on("connection", (socket) => {
     // when connect
     if (interval) {
-         clearInterval(interval);
-     }
+        clearInterval(interval);
+    }
     console.log("a user connected");
 
     socket.on("initialData", async ({ currency }) => {
         const updateInterval = 35000;
-         interval = setInterval(async () => {
+        interval = setInterval(async () => {
             const newUpdatedData = await fetchData(currency);
-             if (newUpdatedData !== undefined) {
+            if (newUpdatedData !== undefined) {
                 socket.emit("updateData", newUpdatedData);
             }
         }, updateInterval);
