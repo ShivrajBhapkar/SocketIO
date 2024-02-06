@@ -12,6 +12,14 @@ const io = socketIO(server, {
     },
 });
 
+// Rate-limiting configuration for Coingecko API calls
+const coingeckoRateLimitOptions = {
+    windowMs: 60 * 1000, // 1 minute
+    max: 10, // 10 requests per minute (adjust according to Coingecko's rate limits)
+};
+
+const coingeckoLimiter = rateLimit(coingeckoRateLimitOptions);
+app.use("https://api.coingecko.com/api/", coingeckoLimiter);
 const fetchData = async (currency) => {
     try {
         const response = await axios.get(
@@ -24,26 +32,23 @@ const fetchData = async (currency) => {
 };
 
 // Rate-limiting configuration
-const rateLimitOptions = {
-    windowMs: 60 * 1000, // 1 minute
-    max: 10, // 10 requests per minute
-};
 
-// Apply rate-limiting middleware to the HTTP server
-const limiter = rateLimit(rateLimitOptions);
-app.use(limiter);
-
+let interval; 
 io.on("connection", (socket) => {
     // when connect
+    if (interval) {
+         console.log("clear");
+         clearInterval(interval);
+     }
     console.log("a user connected");
 
-    socket.on("initialData", async ({ initialData, currency }) => {
-        socket.emit("updateData", initialData);
-        const updateInterval = 60000;
-        const interval = setInterval(async () => {
+    socket.on("initialData", async ({ currency }) => {
+        console.log("inside");
+        const updateInterval = 30000;
+         interval = setInterval(async () => {
             const newUpdatedData = await fetchData(currency);
-
-            if (newUpdatedData !== undefined) {
+             if (newUpdatedData !== undefined) {
+             console.log(newUpdatedData , "updated data");
                 socket.emit("updateData", newUpdatedData);
             }
         }, updateInterval);
