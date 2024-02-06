@@ -37,18 +37,15 @@ let interval;
 io.on("connection", (socket) => {
     // when connect
     if (interval) {
-         console.log("clear");
          clearInterval(interval);
      }
     console.log("a user connected");
 
     socket.on("initialData", async ({ currency }) => {
-        console.log("inside");
-        const updateInterval = 30000;
+        const updateInterval = 35000;
          interval = setInterval(async () => {
             const newUpdatedData = await fetchData(currency);
              if (newUpdatedData !== undefined) {
-             console.log(newUpdatedData , "updated data");
                 socket.emit("updateData", newUpdatedData);
             }
         }, updateInterval);
