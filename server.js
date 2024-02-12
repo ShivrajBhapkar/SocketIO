@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
     cors: {
-        origin: "https://crypto-currency-trackker.netlify.app/",
+        origin: "https://crypto-currency-trackker.netlify.app",
     },
 });
 
